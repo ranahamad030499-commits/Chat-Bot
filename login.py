@@ -261,3 +261,12 @@ def show():
                 f"<b>{chat['sender']}</b> [{chat['time']}]:<br>{chat['message']}</div>",
                 unsafe_allow_html=True
             )
+
+
+from datetime import datetime
+
+def save_chat(user_msg, bot_msg):
+    with open("chat_history.txt", "a", encoding="utf-8") as f:
+        f.write(f"{datetime.now()} | You: {user_msg}\n")
+        f.write(f"{datetime.now()} | Bot: {bot_msg}\n")
+        f.write("-"*50 + "\n")
