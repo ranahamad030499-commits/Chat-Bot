@@ -194,3 +194,70 @@ def show():
             st.success(f"Welcome {username}!")
         else:
             st.error("Incorrect username or password")
+
+
+import streamlit as st
+import openai
+from datetime import datetime
+
+
+openai.api_key = "YOUR_OPENAI_API_KEY"  # <-- Replace your API key
+
+def show():
+    st.header("AI Chat Board")
+    
+    if "messages" not in st.session_state:
+        st.session_state.messages = []
+    
+    msg = st.text_input("Type your message:")
+    
+    col1, col2 = st.columns([1,1])
+    with col1:
+        send_btn = st.button("Send")
+    with col2:
+        clear_btn = st.button("Clear Chat")
+    
+    if clear_btn:
+        st.session_state.messages = []
+    
+    if send_btn and msg:
+        # Save user message
+        st.session_state.messages.append({
+            "sender": "You",
+            "message": msg,
+            "time": datetime.now().strftime("%H:%M:%S")
+        })
+        
+        try:
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=[{"role": "user", "content": msg}]
+            )
+            answer = response.choices[0].message.content.strip()
+        except Exception as e:
+            answer = f"❌ Error: {e}"
+        
+        # Save bot message
+        st.session_state.messages.append({
+            "sender": "Bot",
+            "message": answer,
+            "time": datetime.now().strftime("%H:%M:%S")
+        })
+        
+        # Save chat to file
+  
+    
+    # Display chat
+    for chat in st.session_state.messages:
+        if chat["sender"] == "Bot":
+            st.markdown(
+                f"<div style='background-color:#E6E6FA; padding:10px; border-radius:10px; margin:5px 0'>"
+                f"<b>{chat['sender']}</b> [{chat['time']}]:<br>{chat['message']}</div>",
+                unsafe_allow_html=True
+            )
+        else:
+            st.markdown(
+                f"<div style='background-color:#D1FFD1; padding:10px; border-radius:10px; margin:5px 0'>"
+                f"<b>{chat['sender']}</b> [{chat['time']}]:<br>{chat['message']}</div>",
+                unsafe_allow_html=True
+            )
