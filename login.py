@@ -26,3 +26,61 @@ if st.button("Send") and msg:
  
 for m in st.session_state.messages:
     st.write(m)
+
+
+import streamlit as st
+import openai
+from datetime import datetime
+
+
+openai.api_key = "YOUR_OPENAI_API_KEY"  # <-- Replace with your API key
+
+
+st.set_page_config(page_title="AI Chat Bot", page_icon="🤖")
+
+st.title("🤖 AI Chat Bot (Merged + Extendable)")
+
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+ 
+msg = st.text_input("Your question here:")
+
+ 
+col1, col2 = st.columns([1,1])
+with col1:
+    send_btn = st.button("Send")
+with col2:
+    clear_btn = st.button("Clear Chat")
+
+if clear_btn:
+    st.session_state.messages = []
+ 
+if send_btn and msg:
+    st.session_state.messages.append(f"You: {msg}")
+
+    try:
+        
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo",
+            messages=[{"role": "user", "content": msg}]
+        )
+        answer = response.choices[0].message.content.strip()
+    except Exception as e:
+        answer = f"❌ Error: {e}"
+
+
+    st.session_state.messages.append(f"Bot: {answer}")
+
+ 
+    with open("chat_history.txt", "a", encoding="utf-8") as f:
+        f.write(f"{datetime.now()} | You: {msg}\n")
+        f.write(f"{datetime.now()} | Bot: {answer}\n")
+        f.write("-"*50 + "\n")
+ 
+for chat in st.session_state.messages:
+    if chat.startswith("Bot:"):
+        st.markdown(f"<div style='background-color:#E6E6FA; padding:10px; border-radius:10px; margin:5px 0'><b>Bot</b> [{datetime.now().strftime('%H:%M:%S')}]:<br>{chat[5:].strip()}</div>", unsafe_allow_html=True)
+    else:
+        st.markdown(f"<div style='background-color:#D1FFD1; padding:10px; border-radius:10px; margin:5px 0'><b>You</b> [{datetime.now().strftime('%H:%M:%S')}]:<br>{chat[5:].strip()}</div>", unsafe_allow_html=True)
