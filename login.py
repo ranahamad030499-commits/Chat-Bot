@@ -288,3 +288,29 @@ def show():
             st.success("Chat history cleared!")
         except Exception as e:
             st.error(f"Error clearing chat: {e}")
+
+
+
+
+import streamlit as st
+from datetime import datetime
+import csv
+
+def show():
+    st.header("Feedback Form")
+
+    name = st.text_input("Your Name")
+    feedback = st.text_area("Your Feedback")
+    rating = st.slider("Rate this app (1-5)", 1, 5, 3)
+
+    if st.button("Submit Feedback"):
+        if name.strip() == "" or feedback.strip() == "":
+            st.error("Please fill all fields")
+        else:
+            try:
+                with open("feedback.csv", "a", newline="", encoding="utf-8") as f:
+                    writer = csv.writer(f)
+                    writer.writerow([datetime.now(), name, feedback, rating])
+                st.success("Thank you! Your feedback is saved.")
+            except Exception as e:
+                st.error(f"Error saving feedback: {e}")
