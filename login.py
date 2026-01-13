@@ -155,3 +155,42 @@ for chat in st.session_state.messages:
             f"<b>{chat['sender']}</b> [{chat['time']}]:<br>{chat['message']}</div>",
             unsafe_allow_html=True
         )
+
+
+import streamlit as st
+
+def show():
+    st.header("Welcome to AI Chat Board!")
+    st.write("""
+        This is a fully-featured AI Chat Board built with Streamlit and OpenAI API.
+        Use the sidebar to navigate:
+        - Login
+        - Chat
+        - Settings
+        - Feedback
+        - About
+    """)
+
+
+import streamlit as st
+
+def show():
+    st.header("Login Page")
+    
+    if "logged_in" not in st.session_state:
+        st.session_state.logged_in = False
+    
+    if st.session_state.logged_in:
+        st.success("You are already logged in!")
+        return
+    
+    username = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+    
+    if st.button("Login"):
+        # Simple check for demonstration (hardcoded)
+        if username == "user" and password == "1234":
+            st.session_state.logged_in = True
+            st.success(f"Welcome {username}!")
+        else:
+            st.error("Incorrect username or password")
