@@ -33,7 +33,7 @@ import openai
 from datetime import datetime
 
 
-openai.api_key = "YOUR_OPENAI_API_KEY"  # <-- Replace with your API key
+openai.api_key = "YOUR_OPENAI_API_KEY"  
 
 
 st.set_page_config(page_title="AI Chat Bot", page_icon="🤖")
@@ -90,8 +90,7 @@ import streamlit as st
 import openai
 from datetime import datetime
 
-openai.api_key = "YOUR_OPENAI_API_KEY"  # <-- Replace with your key
-
+openai.api_key = "YOUR_OPENAI_API_KEY" 
 st.set_page_config(page_title="AI Chat Bot", page_icon="🤖")
 
 st.title("🤖 AI Chat Bot (Upgraded + Extendable)")
@@ -188,7 +187,6 @@ def show():
     password = st.text_input("Password", type="password")
     
     if st.button("Login"):
-        # Simple check for demonstration (hardcoded)
         if username == "user" and password == "1234":
             st.session_state.logged_in = True
             st.success(f"Welcome {username}!")
@@ -201,7 +199,7 @@ import openai
 from datetime import datetime
 
 
-openai.api_key = "YOUR_OPENAI_API_KEY"  # <-- Replace your API key
+openai.api_key = "YOUR_OPENAI_API_KEY" 
 
 def show():
     st.header("AI Chat Board")
@@ -244,10 +242,6 @@ def show():
             "time": datetime.now().strftime("%H:%M:%S")
         })
         
-        # Save chat to file
-  
-    
-    # Display chat
     for chat in st.session_state.messages:
         if chat["sender"] == "Bot":
             st.markdown(
@@ -270,3 +264,27 @@ def save_chat(user_msg, bot_msg):
         f.write(f"{datetime.now()} | You: {user_msg}\n")
         f.write(f"{datetime.now()} | Bot: {bot_msg}\n")
         f.write("-"*50 + "\n")
+
+
+import streamlit as st
+
+def show():
+    st.header("Settings")
+
+    if "ai_personality" not in st.session_state:
+        st.session_state.ai_personality = "Friendly"
+
+    st.write("Select AI Personality:")
+    personality = st.radio("Choose one:", ["Friendly", "Professional", "Funny"])
+
+    st.session_state.ai_personality = personality
+
+    st.write(f"Current AI Personality: **{st.session_state.ai_personality}**")
+
+    if st.button("Clear Chat History"):
+        try:
+            with open("chat_history.txt", "w", encoding="utf-8") as f:
+                f.write("")
+            st.success("Chat history cleared!")
+        except Exception as e:
+            st.error(f"Error clearing chat: {e}")
